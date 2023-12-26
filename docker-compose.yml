@@ -1,0 +1,54 @@
+version: '3.6'
+services:
+
+  dnscrypt-proxy:
+    # Restart on crashes and on reboots
+    restart: unless-stopped
+    image: klutchell/dnscrypt-proxy:main
+    volumes:
+      - './data/dnscrypt-proxy/config:/config'
+    networks:
+      pihole_net:
+        ipv4_address: ${PIHOLE_PRIVATE_NET_PREFIX}.4
+
+  pihole:
+    restart: unless-stopped
+    hostname: ${SITENAME}_pihole
+    image: pihole/pihole:2023.11.0
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "80:80/tcp"
+      - "443:443/tcp"
+    environment:
+      TZ: ${TZ}
+      WEBPASSWORD: '${ADMIN_PASS}'
+      DNSSEC: 'false'
+      IPv6: 'true'
+      REV_SERVER: 'true'
+      REV_SERVER_TARGET: '${CONDITIONAL_FORWARDING_IP}'
+      REV_SERVER_DOMAIN: '${SITENAME}.local'
+      REV_SERVER_CIDR: '${REV_SERVER_CIDR}'
+      PIHOLE_DNS_: '${PIHOLE_PRIVATE_NET_PREFIX}.4#5053' #'9.9.9.9'
+      FTLCONF_LOCAL_IPV4: ${IPV4ADDR}
+      FTLCONF_LOCAL_IPV6: ${IPV6ADDR}
+    volumes:
+       - ${VOLUMESDIR}/pihole/etc-pihole:/etc/pihole/
+       - ${VOLUMESDIR}/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/
+    dns:
+      - 127.0.0.1
+      - ${PIHOLE_PRIVATE_NET_PREFIX}.4:5053
+      - 9.9.9.9
+    depends_on:
+      - dnscrypt-proxy
+    networks:
+      pihole_net:
+        ipv4_address: ${PIHOLE_PRIVATE_NET_PREFIX}.3
+
+networks:
+  pihole_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${PIHOLE_PRIVATE_NET_PREFIX}.0/29
