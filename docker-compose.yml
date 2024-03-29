@@ -4,7 +4,7 @@ services:
   dnscrypt-proxy:
     # Restart on crashes and on reboots
     restart: unless-stopped
-    image: klutchell/dnscrypt-proxy:main
+    image: klutchell/dnscrypt-proxy:v2.1.5
     volumes:
       - './data/dnscrypt-proxy/config:/config'
     networks:
@@ -14,7 +14,7 @@ services:
   pihole:
     restart: unless-stopped
     hostname: ${SITENAME}_pihole
-    image: pihole/pihole:2023.11.0
+    image: pihole/pihole:2024.03.1
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -36,10 +36,6 @@ services:
     volumes:
        - ${VOLUMESDIR}/pihole/etc-pihole:/etc/pihole/
        - ${VOLUMESDIR}/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/
-    dns:
-      - 127.0.0.1
-      - ${PIHOLE_PRIVATE_NET_PREFIX}.4:5053
-      - 9.9.9.9
     depends_on:
       - dnscrypt-proxy
     networks:
