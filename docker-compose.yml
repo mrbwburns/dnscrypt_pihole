@@ -1,4 +1,3 @@
-version: '3.6'
 services:
 
   dnscrypt-proxy:
@@ -14,7 +13,7 @@ services:
   pihole:
     restart: unless-stopped
     hostname: ${SITENAME}_pihole
-    image: pihole/pihole:2024.03.2
+    image: pihole/pihole:2024.05.0
     ports:
       - "53:53/tcp"
       - "53:53/udp"
