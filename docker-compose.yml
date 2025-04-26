@@ -3,7 +3,7 @@ services:
   dnscrypt-proxy:
     # Restart on crashes and on reboots
     restart: unless-stopped
-    image: klutchell/dnscrypt-proxy:v2.1.5
+    image: klutchell/dnscrypt-proxy:v2.1.7
     volumes:
       - './data/dnscrypt-proxy/config:/config'
     networks:
@@ -13,7 +13,7 @@ services:
   pihole:
     restart: unless-stopped
     hostname: ${SITENAME}_pihole
-    image: pihole/pihole:2025.03.0
+    image: pihole/pihole:2025.04.0
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -22,14 +22,13 @@ services:
       - "443:443/tcp"
     environment:
       TZ: ${TZ}
-      WEBPASSWORD: '${ADMIN_PASS}'
-      DNSSEC: 'false'
-      IPv6: 'true'
-      REV_SERVER: 'true'
-      REV_SERVER_TARGET: '${CONDITIONAL_FORWARDING_IP}'
-      REV_SERVER_DOMAIN: '${SITENAME}.local'
-      REV_SERVER_CIDR: '${REV_SERVER_CIDR}'
-      PIHOLE_DNS_: '${PIHOLE_PRIVATE_NET_PREFIX}.4#5053' #'9.9.9.9'
+      FTLCONF_webserver_api_password: '${ADMIN_PASS}'
+      FTLCONF_dns_dnssec: 'false'
+      FTLCONF_dns_revServers: 'true,${REV_SERVER_CIDR},${CONDITIONAL_FORWARDING_IP}#53,${SITENAME}.local'
+      FTLCONF_dns_upstreams: '${PIHOLE_PRIVATE_NET_PREFIX}.4#5053' #'9.9.9.9'
+      FTLCONF_dns_queryLogging: 'true'
+      FTLCONF_dns_interface: 'eth0'
+      FTLCONF_dns_listeningMode: 'ALL'
       FTLCONF_LOCAL_IPV4: ${IPV4ADDR}
       FTLCONF_LOCAL_IPV6: ${IPV6ADDR}
     volumes:
