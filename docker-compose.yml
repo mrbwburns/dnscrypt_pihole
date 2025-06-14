@@ -3,7 +3,7 @@ services:
   dnscrypt-proxy:
     # Restart on crashes and on reboots
     restart: unless-stopped
-    image: klutchell/dnscrypt-proxy:v2.1.7
+    image: klutchell/dnscrypt-proxy:v2.1.12
     volumes:
       - './data/dnscrypt-proxy/config:/config'
     networks:
