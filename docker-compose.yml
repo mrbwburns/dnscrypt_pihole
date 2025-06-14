@@ -13,7 +13,7 @@ services:
   pihole:
     restart: unless-stopped
     hostname: ${SITENAME}_pihole
-    image: pihole/pihole:2025.05.1
+    image: pihole/pihole:2025.06.2
     ports:
       - "53:53/tcp"
       - "53:53/udp"
